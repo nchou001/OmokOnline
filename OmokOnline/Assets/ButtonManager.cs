@@ -6,6 +6,7 @@ public class ButtonManager : MonoBehaviour {
 
 	public GameObject buttonPrefab;
 	public GameObject gridLayout;
+	public GameLogic gameLogic;
 
 	// Use this for initialization
 	void Awake () {
@@ -13,7 +14,8 @@ public class ButtonManager : MonoBehaviour {
 			GameObject prefabInstance = Object.Instantiate (buttonPrefab);
 			prefabInstance.transform.SetParent (gridLayout.transform, false);  //false needed so scale doesn't change
 			Button button = prefabInstance.GetComponent<Button> ();
-			button.onClick.AddListener(() => { OnButtonClicked(i, button); });
+			int index = i;
+			button.onClick.AddListener(() => { OnButtonClicked(index, button); });
 		}
 	}
 
@@ -24,6 +26,15 @@ public class ButtonManager : MonoBehaviour {
 
 	public void OnButtonClicked(int buttonIndex, Button b)
 	{
-		b.GetComponent<Image> ().color = Color.red;
+		int currPlayer = gameLogic.GetCurrPlayer ();
+		if (gameLogic.PlaceMove (buttonIndex) == 0) {
+			if (currPlayer == 1) {
+				b.GetComponent<Image> ().color = Color.red;
+			} else if (currPlayer == 2) {
+				b.GetComponent<Image> ().color = Color.blue;
+			}
+		} else {
+			Debug.Log ("Tried to click opponent's piece");
+		}
 	}
 }
